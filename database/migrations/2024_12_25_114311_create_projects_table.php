@@ -15,9 +15,16 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description');
+            $table->string('skillsNeeded')->nullable();
+            $table->enum('status', ['archived', 'active'])->default('active');
+            $table->foreignId('categoryId')->constrained('categories')->onDelete('cascade'); // References categories.id
+            $table->integer('amount')->nullable();
             $table->timestamps();
         });
     }
+    
 
     /**
      * Reverse the migrations.

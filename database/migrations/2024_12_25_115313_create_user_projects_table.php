@@ -13,12 +13,15 @@ class CreateUserProjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_projects', function (Blueprint $table) {
+        Schema::create('userProjects', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['applied', 'favorited','rejected']);
             $table->timestamps();
         });
     }
-
+    
     /**
      * Reverse the migrations.
      *

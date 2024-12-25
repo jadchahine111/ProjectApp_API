@@ -13,5 +13,14 @@ class User extends Model
     public function notifications() {
         return $this->hasMany(Notification::class);
      }
+     public function projects()
+     {
+         return $this->belongsToMany(Project::class, 'user_projects')
+                     ->withPivot('status')
+                     ->withTimestamps(); 
      
+     }
+     public function project() {
+        return $this->hasMany(Project::class);
+     }
 }

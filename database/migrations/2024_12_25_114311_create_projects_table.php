@@ -20,6 +20,7 @@ class CreateProjectsTable extends Migration
             $table->string('skillsNeeded')->nullable();
             $table->enum('status', ['archived', 'active'])->default('active');
             $table->foreignId('categoryId')->constrained('categories')->onDelete('cascade'); // References categories.id
+            $table->foreignId('userId')->constrained('users')->onDelete('cascade'); // References categories.id
             $table->integer('amount')->nullable();
             $table->timestamps();
         });

@@ -15,8 +15,8 @@ class CreateUserProjectsTable extends Migration
     {
         Schema::create('userProjects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('project_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('userId')->constrained('users')->onDelete('cascade');
+            $table->foreignId('projectId')->constrained('projects')->onDelete('cascade');
             $table->enum('status', ['applied', 'favorited','rejected']);
             $table->timestamps();
         });

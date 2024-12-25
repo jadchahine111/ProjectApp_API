@@ -15,6 +15,19 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string("username");
+            $table->string("email");
+            $table->string("password");
+            $table->string("firstName");
+            $table->string("lastName");
+            $table->string("frontIdPic");
+            $table->string("backIdPic");
+            $table->enum('userStatus', ['verified', 'notVerified'])->default('notVerified');
+            $table->enum('registrationStatus', ['accepted', 'pending'])->default('pending');
+            $table->string("CV");
+            $table->text("bio")->nullable();
+            $table->string("linkedinURL")->nullable();
+            $table->string("skills")->nullable();
             $table->timestamps();
         });
     }

@@ -7,8 +7,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\VerifyEmailRequest; // Import the custom request
+use App\Http\Requests\AdminLoginRequest; // Import the custom request
 use App\Http\Requests\SignUpRequest;
-
+use App\Models\Admin;
 
 class AuthController extends Controller
 {
@@ -109,4 +110,26 @@ class AuthController extends Controller
         ], 201);
     }
     
+        // Login API
+        public function loginAdmin(AdminLoginRequest $request)
+        {
+            // Validate request using LoginRequest (validation handled automatically)
+    
+            // Find user by email
+            $admin = Admin::where('username', $request->username)->first();
+    
+            // Validate user existence and password
+            if (!$admin || !Hash::check($request->password, $admin->password)) {
+                return response()->json(['error' => 'Invalid credentials'], 401);
+            }
+    
+            // Generate Sanctum token
+            $token = $admin->createToken('AdminAuthToken')->plainTextToken;
+    
+            // Return response with token and user details
+            return response()->json([
+                'message' => 'Admin Login successful',
+                'token' => $token,
+            ]);
+        }
 }

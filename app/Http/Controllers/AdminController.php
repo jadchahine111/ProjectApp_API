@@ -4,9 +4,87 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
+
+    // Accept User Registration
+    public function acceptUserRegistration($userId)
+    {
+        // Find the user by ID
+        $user = User::find($userId);
+
+        // Check if user exists
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Update registration status to accepted
+        $user->registrationStatus = 'accepted';
+        $user->save();
+
+        // Send acceptance email
+        $this->sendAcceptanceEmail($user);
+
+        return response()->json(['message' => 'User registration accepted successfully']);
+    }
+
+    // Send Acceptance Email
+    protected function sendAcceptanceEmail(User $user)
+    {
+        // Send email using Laravel's Mail facade
+        Mail::send([], [], function ($message) use ($user) {
+            $message->to($user->email)
+                    ->subject('Your Registration Has Been Accepted')
+                    ->setBody("Dear {$user->firstName} {$user->lastName},<br><br>Your registration has been accepted!", 'text/html');
+        });
+    }
+
+    public function declineUserRegistration($userId)
+    {
+        // Find the user by ID
+        $user = User::find($userId);
+
+        // Check if user exists
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Delete the user from the database
+        $user->delete();
+
+        // Send rejection email
+        $this->sendRejectionEmail($user);
+
+        return response()->json(['message' => 'User registration declined and user deleted']);
+    }    
+
+    // Send Rejection Email
+    protected function sendRejectionEmail(User $user)
+    {
+        // Send email using Laravel's Mail facade
+        Mail::send([], [], function ($message) use ($user) {
+            $message->to($user->email)
+                    ->subject('Your Registration Has Been Rejected')
+                    ->setBody("Dear {$user->firstName} {$user->lastName},<br><br>We regret to inform you that your registration has been rejected.<br><br>Best regards,<br>Your Team", 'text/html');
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Display a listing of the resource.
      *

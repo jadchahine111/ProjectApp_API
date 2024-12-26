@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categories;
+use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
+
 
 class CategoriesController extends Controller
 {
@@ -14,8 +16,10 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Categories::all();
+        return response()->json(CategoryResource::collection($categories));
     }
+    
 
     /**
      * Show the form for creating a new resource.

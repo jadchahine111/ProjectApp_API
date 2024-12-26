@@ -2,11 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Notifications;
+use App\Http\Resources\NotificationResource;
 use Illuminate\Http\Request;
 
 class NotificationsController extends Controller
 {
+    /**
+     * Get notifications for a specific user.
+     *
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNotifications(User $user)
+    {
+      
+        $notifications = Notifications::where('userId', $user->id)->get();
+
+        if ($notifications->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+                'message' => 'No notifications found for this user.',
+            ], 200);
+        }
+
+
+        return response()->json([
+            'success' => true,
+            'data' => NotificationResource::collection($notifications),
+        ], 200);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -41,10 +69,10 @@ class NotificationsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Notifications  $notifications
+     * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function show(Notifications $notifications)
+    public function show(Notifications $notification)
     {
         //
     }
@@ -52,10 +80,10 @@ class NotificationsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Notifications  $notifications
+     * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function edit(Notifications $notifications)
+    public function edit(Notifications $notification)
     {
         //
     }
@@ -64,10 +92,10 @@ class NotificationsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Notifications  $notifications
+     * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Notifications $notifications)
+    public function update(Request $request, Notifications $notification)
     {
         //
     }
@@ -75,10 +103,10 @@ class NotificationsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Notifications  $notifications
+     * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Notifications $notifications)
+    public function destroy(Notifications $notification)
     {
         //
     }

@@ -10,6 +10,22 @@ class User extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'username', 
+        'email', 
+        'password', 
+        'firstName', 
+        'lastName', 
+        'frontIdPic', 
+        'backIdPic', 
+        'userStatus', 
+        'registrationStatus', 
+        'CV', 
+        'bio', 
+        'linkedinURL', 
+        'skills'
+    ];
+    
     public function notifications() {
         return $this->hasMany(Notification::class);
      }

@@ -37,6 +37,8 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/applied-projects/{userId}', [UserProjectController::class, 'getAppliedProjects']);
     Route::get('/favorited-projects/{userId}', [UserProjectController::class, 'getFavoritedProjects']);
     Route::get('/rejected-projects/{userId}', [UserProjectController::class, 'getRejectedProjects']);
+Route::put('/user-projects/apply/{id}', [UserProjectController::class, 'apply']);
+Route::put('/user-projects/reject/{id}', [UserProjectController::class, 'reject']);
 
 
 });

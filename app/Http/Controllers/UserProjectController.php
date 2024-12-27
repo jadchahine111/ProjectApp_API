@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\userProjectResource;
 use App\Models\UserProject;
 use App\Models\User;
 use App\Models\Project;
@@ -90,8 +91,59 @@ class UserProjectController extends Controller
             'data' => ProjectResource::collection($projects),
         ], 200);
     }
+    
 
+    public function apply($id)
+    {
+        // Find the UserProject by ID
+        $userProject = UserProject::find($id);
 
+        if (!$userProject) {
+            return response()->json([
+                'success' => false,
+                'message' => 'UserProject not found.',
+            ], 404);
+        }
+
+        // Update the status to "applied"
+        $userProject->update([
+            'status' => 'applied',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated to applied.',
+        ], 200);
+    }
+
+    /**
+     * Set the status to "rejected".
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reject($id)
+    {
+        // Find the UserProject by ID
+        $userProject = UserProject::find($id);
+
+        if (!$userProject) {
+            return response()->json([
+                'success' => false,
+                'message' => 'UserProject not found.',
+            ], 404);
+        }
+
+        // Update the status to "rejected"
+        $userProject->update([
+            'status' => 'rejected',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated to rejected.',
+        ], 200);
+    }
     public function index()
     {
         //

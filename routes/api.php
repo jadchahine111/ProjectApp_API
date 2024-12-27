@@ -24,7 +24,7 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::prefix('user')->middleware('auth:sanctum:user')->group(function () {
+Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
     Route::get('/{id}', [UserController::class, 'show']);
     Route::put('/update/{id}', [UserController::class, 'updateUserDetails']);
@@ -36,7 +36,7 @@ Route::prefix('user')->middleware('auth:sanctum:user')->group(function () {
     Route::get('/categories', [CategoriesController::class, 'index']);
 });
 
-Route::prefix('admin')->middleware('auth:sanctum:admin')->group(function () {
+Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('/accept-registration/{userId}', [AdminController::class, 'acceptUserRegistration']);
     Route::post('/decline-registration/{userId}', [AdminController::class, 'declineUserRegistration']);
 });

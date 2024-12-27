@@ -35,17 +35,16 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
     // Categories APIs
     Route::get('/categories', [CategoriesController::class, 'index']);
+
+    Route::get('/applied-projects/{userId}', [UserProjectController::class, 'getAppliedProjects']);
+
 });
 
 Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('/accept-registration/{userId}', [AdminController::class, 'acceptUserRegistration']);
     Route::post('/decline-registration/{userId}', [AdminController::class, 'declineUserRegistration']);
-Route::get('/user/applied-projects/{userId}', [UserProjectController::class, 'getAppliedProjects']);
-Route::get('/user/notifications/{id}', [NotificationsController::class, 'getNotifications']);
-Route::get('/categories', [CategoriesController::class, 'index']);
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });
+
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);

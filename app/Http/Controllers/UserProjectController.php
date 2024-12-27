@@ -304,6 +304,59 @@ class UserProjectController extends Controller
         ], 200);
     }
     
+
+    public function getUserArchivedProjects()
+    {
+        
+        $userId = Auth::id();
+
+        // Get projects that are associated with the user and have a status of 'archived'
+        $projects = Project::where('userId', $userId)
+                            ->where('status', 'archived')  // Filter projects with 'archived' status
+                            ->get();
+
+        // Check if the user has posted any projects
+        if ($projects->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                "message" => "You don't have any archived project applications",
+            ], 404);
+        }
+
+        // Return the projects as a collection using ProjectResource
+        return response()->json([
+            'success' => true,
+            'data' => ProjectResource::collection($projects),
+        ], 200);
+    }
+
+    
+    public function getUserActiveProjects()
+    {
+        
+        $userId = Auth::id();
+
+        // Get projects that are associated with the user and have a status of 'archived'
+        $projects = Project::where('userId', $userId)
+                            ->where('status', 'active')  // Filter projects with 'archived' status
+                            ->get();
+
+        // Check if the user has posted any projects
+        if ($projects->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                "message" => "You don't have any active project applications",
+            ], 404);
+        }
+
+        // Return the projects as a collection using ProjectResource
+        return response()->json([
+            'success' => true,
+            'data' => ProjectResource::collection($projects),
+        ], 200);
+    }
+
+
     public function index()
     {
         //

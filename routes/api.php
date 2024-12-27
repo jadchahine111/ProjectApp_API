@@ -25,15 +25,17 @@ use App\Http\Controllers\ProjectController;
 
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/info', [UserController::class, 'getUserDetailsById']);
+    Route::get('/{id}', [UserController::class, 'getOtherUserDetailsById']);
     Route::put('/update', [UserController::class, 'updateUserDetails']);
-    // Notification APIs
     Route::get('/notifications', [NotificationsController::class, 'getNotifications']);
-    // Categories APIs
     Route::get('/categories', [CategoriesController::class, 'index']);
     Route::get('/applied-projects', [UserProjectController::class, 'getAppliedProjects']);
     Route::get('/favorited-projects', [UserProjectController::class, 'getFavoritedProjects']);
     Route::get('/rejected-projects', [UserProjectController::class, 'getRejectedProjects']);
     Route::get('/posted-projects', [UserProjectController::class, 'getUserPostedProjects']);
+    Route::get('/active-projects', [UserProjectController::class, 'getUserActiveProjects']);
+    Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
+
     Route::put('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
     Route::put('/user-projects/reject/{projectId}', [UserProjectController::class, 'reject']);
     Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
@@ -42,7 +44,6 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/add-project', [UserProjectController::class, 'postAProject']);
     Route::post('/add-fav/{projectId}', [UserProjectController::class, 'addProjectToFav']);
     Route::delete('/remove-fav/{projectId}', [UserProjectController::class, 'remProjectFromFav']);
-     // Project APIs
     Route::get('/projects/recent-active', [ProjectController::class, 'getRecentActiveProjects']); // Get recent active projects
     Route::put('/projects/update/{projectId}', [ProjectController::class, 'updateProject']); // Update project details
 });

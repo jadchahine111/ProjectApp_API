@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserRequest; // Import the custom request
+use App\Http\Resources\ViewUserResource;
+
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -38,6 +40,18 @@ class UserController extends Controller
         $user->save();
     
         return response()->json(['message' => 'User details updated successfully', 'user' => $user], 200);
+    }
+
+    public function getOtherUserDetailsById($userId) {
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        return response()->json(new ViewUserResource($user), 200);
+
     }
     
 

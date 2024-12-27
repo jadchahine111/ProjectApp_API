@@ -144,6 +144,78 @@ class UserProjectController extends Controller
             'message' => 'Status updated to rejected.',
         ], 200);
     }
+    public function archiveProject($projectId)
+    {
+        // Find the Project by ID
+        $project = Project::find($projectId);
+
+        if (!$project) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Project not found.',
+            ], 404);
+        }
+
+        // Update the project status to "archived"
+        $project->update([
+            'status' => 'archived',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project has been archived.',
+        ], 200);
+    }
+    public function unarchiveProject($projectId)
+    {
+        // Find the Project by ID
+        $project = Project::find($projectId);
+
+        if (!$project) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Project not found.',
+            ], 404);
+        }
+
+        // Check if the project is already active
+        if ($project->status === 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Project is already active.',
+            ], 400);
+        }
+
+        // Update the project status to "active"
+        $project->update([
+            'status' => 'active',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project has been removed from archived status.',
+        ], 200);
+    }
+    public function deleteProject($projectId)
+    {
+        // Find the Project by ID
+        $project = Project::find($projectId);
+
+        if (!$project) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Project not found.',
+            ], 404);
+        }
+
+        // Delete the project
+        $project->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project deleted successfully.',
+        ], 200);
+    }
     public function index()
     {
         //

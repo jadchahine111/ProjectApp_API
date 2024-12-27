@@ -39,6 +39,9 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/rejected-projects/{userId}', [UserProjectController::class, 'getRejectedProjects']);
 Route::put('/user-projects/apply/{id}', [UserProjectController::class, 'apply']);
 Route::put('/user-projects/reject/{id}', [UserProjectController::class, 'reject']);
+Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
+Route::put('/projects/archive/{projectId}', [UserProjectController::class, 'archiveProject']);
+Route::delete('/projects/delete/{projectId}', [UserProjectController::class, 'deleteProject']);
 
 
 });

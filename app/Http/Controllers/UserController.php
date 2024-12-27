@@ -4,9 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateUserRequest; // Import the custom request
 
 class UserController extends Controller
 {
+
+    public function updateUserDetails(UpdateUserRequest $request, $id)
+    {
+        // Fetch the user
+        $user = User::find($id);
+
+        // Check if the user exists
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Update the user details
+        $user->username = $request->input('username', $user->username);
+        $user->firstName = $request->input('firstName', $user->firstName);
+        $user->lastName = $request->input('lastName', $user->lastName);
+        $user->bio = $request->input('bio', $user->bio);
+        $user->linkedinURL = $request->input('linkedinURL', $user->linkedinURL);
+        $user->skills = $request->input('skills', $user->skills);
+
+        // Handle CV upload
+        if ($request->hasFile('CV')) {
+            $cvPath = $request->file('CV')->store('CVs', 'public');
+            $user->CV = $cvPath;
+        }
+
+        // Save the updated user
+        $user->save();
+
+        return response()->json(['message' => 'User details updated successfully', 'user' => $user], 200);
+    }
+
     /**
      * Display a listing of the resource.
      *

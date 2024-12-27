@@ -1,3 +1,5 @@
+api.php
+
 <?php
 
 use Illuminate\Http\Request;
@@ -23,8 +25,10 @@ use App\Http\Controllers\UserController;
 */
 
 Route::prefix('user')->middleware('auth:sanctum:user')->group(function () {
-    Route::get('/{id}', [UserController::class, 'show']);
 
+    Route::get('/{id}', [UserController::class, 'show']);
+    Route::put('/update/{id}', [UserController::class, 'updateUserDetails']);
+    
     // Notification APIs
     Route::get('/notifications/{id}', [NotificationsController::class, 'getNotifications']);
 

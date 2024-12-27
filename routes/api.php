@@ -1,5 +1,3 @@
-api.php
-
 <?php
 
 use Illuminate\Http\Request;
@@ -37,6 +35,9 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoriesController::class, 'index']);
 
     Route::get('/applied-projects/{userId}', [UserProjectController::class, 'getAppliedProjects']);
+    Route::get('/favorited-projects/{userId}', [UserProjectController::class, 'getFavoritedProjects']);
+    Route::get('/rejected-projects/{userId}', [UserProjectController::class, 'getRejectedProjects']);
+
 
 });
 

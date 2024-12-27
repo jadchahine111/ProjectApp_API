@@ -15,10 +15,10 @@ class NotificationsController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getNotifications(User $user)
+    public function getNotifications($userId)
     {
       
-        $notifications = Notifications::where('userId', $user->id)->get();
+        $notifications = Notifications::where('userId', $userId)->get();
 
         if ($notifications->isEmpty()) {
             return response()->json([

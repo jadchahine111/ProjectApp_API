@@ -15,10 +15,10 @@ class UserProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getAppliedProjects(User $user)
+    public function getAppliedProjects($userId)
     {
         // Fetch all project IDs where the user applied
-        $appliedProjectIds = UserProject::where('userId', $user->id)
+        $appliedProjectIds = UserProject::where('userId', $userId)
             ->where('status', 'applied')
             ->pluck('projectId'); 
 
@@ -27,7 +27,7 @@ class UserProjectController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'No applied projects found for this user.',
-            ], 404);
+            ], 200);
         }
 
         // Fetch project details based on project IDs
@@ -39,6 +39,59 @@ class UserProjectController extends Controller
             'data' => ProjectResource::collection($projects),
         ], 200);
     }
+
+    public function getFavoritedProjects($userId)
+    {
+        // Fetch all project IDs where the user applied
+        $favoritedProjectIds = UserProject::where('userId', $userId)
+            ->where('status', 'favorited')
+            ->pluck('projectId'); 
+
+        // Check if there are any applied projects
+        if ($favoritedProjectIds->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                "message" => "You don't have any projects in your favorites",
+            ], 200);
+        }
+
+        // Fetch project details based on project IDs
+        $projects = Project::whereIn('id', $favoritedProjectIds)->get();
+
+        // Return projects as a collection using ProjectResource
+        return response()->json([
+            'success' => true,
+            'data' => ProjectResource::collection($projects),
+        ], 200);
+    }
+
+
+    public function getRejectedProjects($userId)
+    {
+        // Fetch all project IDs where the user applied
+        $declinedProjectIds = UserProject::where('userId', $userId)
+            ->where('status', 'rejected')
+            ->pluck('projectId'); 
+
+        // Check if there are any applied projects
+        if ($declinedProjectIds->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                "message" => "You didn't get rejected by any projects",
+            ], 200);
+        }
+
+        // Fetch project details based on project IDs
+        $projects = Project::whereIn('id', $declinedProjectIds)->get();
+
+        // Return projects as a collection using ProjectResource
+        return response()->json([
+            'success' => true,
+            'data' => ProjectResource::collection($projects),
+        ], 200);
+    }
+
+
     public function index()
     {
         //

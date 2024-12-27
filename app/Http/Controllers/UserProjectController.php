@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserProject;
+use App\Models\User;
+use App\Models\Project;
 use Illuminate\Http\Request;
+use App\Http\Resources\ProjectResource;
 
 class UserProjectController extends Controller
 {
@@ -12,6 +15,30 @@ class UserProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function getAppliedProjects(User $user)
+    {
+        // Fetch all project IDs where the user applied
+        $appliedProjectIds = UserProject::where('userId', $user->id)
+            ->where('status', 'applied')
+            ->pluck('projectId'); 
+
+        // Check if there are any applied projects
+        if ($appliedProjectIds->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No applied projects found for this user.',
+            ], 404);
+        }
+
+        // Fetch project details based on project IDs
+        $projects = Project::whereIn('id', $appliedProjectIds)->get();
+
+        // Return projects as a collection using ProjectResource
+        return response()->json([
+            'success' => true,
+            'data' => ProjectResource::collection($projects),
+        ], 200);
+    }
     public function index()
     {
         //

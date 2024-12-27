@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\UserProjectController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
@@ -39,6 +40,11 @@ Route::prefix('user')->middleware('auth:sanctum:user')->group(function () {
 Route::prefix('admin')->middleware('auth:sanctum:admin')->group(function () {
     Route::post('/accept-registration/{userId}', [AdminController::class, 'acceptUserRegistration']);
     Route::post('/decline-registration/{userId}', [AdminController::class, 'declineUserRegistration']);
+Route::get('/user/applied-projects/{userId}', [UserProjectController::class, 'getAppliedProjects']);
+Route::get('/user/notifications/{id}', [NotificationsController::class, 'getNotifications']);
+Route::get('/categories', [CategoriesController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
 });
 
 Route::prefix('auth')->group(function () {

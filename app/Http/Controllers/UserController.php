@@ -44,9 +44,18 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($id)
     {
-        //
+    // Fetch the user by ID
+        $user = User::find($id);
+
+        // Check if the user exists
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Return the user details as a JSON response
+        return response()->json(['user' => $user], 200);
     }
 
     /**

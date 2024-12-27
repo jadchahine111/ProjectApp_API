@@ -35,9 +35,8 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/posted-projects', [UserProjectController::class, 'getUserPostedProjects']);
     Route::get('/active-projects', [UserProjectController::class, 'getUserActiveProjects']);
     Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
-
     Route::put('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
-    Route::put('/user-projects/reject/{projectId}', [UserProjectController::class, 'reject']);
+    Route::put('/user-projects/reject/{userId}', [UserProjectController::class, 'reject']);
     Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
     Route::put('/projects/archive/{projectId}', [UserProjectController::class, 'archiveProject']);
     Route::delete('/projects/delete/{projectId}', [UserProjectController::class, 'deleteProject']);

@@ -106,26 +106,33 @@ class UserProjectController extends Controller
 
     public function apply($id)
     {
-        // Find the UserProject by ID
-        $userProject = UserProject::find($id);
-
-        if (!$userProject) {
+        $userId = Auth::id();
+    
+        // Check if the user has already applied to the project
+        $userProject = UserProject::where('userId', $userId)
+                                  ->where('projectId', $id)
+                                  ->first();
+    
+        if ($userProject) {
             return response()->json([
-                'success' => false,
-                'message' => 'UserProject not found.',
-            ], 404);
+                'success' => true,
+                'message' => 'You already applied to this project.',
+            ], 200);
         }
-
-        // Update the status to "applied"
-        $userProject->update([
+    
+        // Create a new record in UserProject and set status to "applied"
+        UserProject::create([
+            'userId' => $userId,
+            'projectId' => $id,
             'status' => 'applied',
         ]);
-
+    
         return response()->json([
             'success' => true,
-            'message' => 'Status updated to applied.',
-        ], 200);
+            'message' => 'You have successfully applied to the project.',
+        ], 201); // 201 indicates resource created
     }
+    
 
     /**
      * Set the status to "rejected".

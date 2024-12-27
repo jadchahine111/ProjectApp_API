@@ -5,20 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserRequest; // Import the custom request
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
 
-    public function updateUserDetails(UpdateUserRequest $request, $id)
+    public function updateUserDetails(UpdateUserRequest $request)
     {
-        // Fetch the user
-        $user = User::find($id);
-
-        // Check if the user exists
+        // Fetch the authenticated user
+        $user = Auth::user();
+    
+        // Check if the user exists and is an instance of User
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-
+    
         // Update the user details
         $user->username = $request->input('username', $user->username);
         $user->firstName = $request->input('firstName', $user->firstName);
@@ -26,18 +27,19 @@ class UserController extends Controller
         $user->bio = $request->input('bio', $user->bio);
         $user->linkedinURL = $request->input('linkedinURL', $user->linkedinURL);
         $user->skills = $request->input('skills', $user->skills);
-
+    
         // Handle CV upload
         if ($request->hasFile('CV')) {
             $cvPath = $request->file('CV')->store('CVs', 'public');
             $user->CV = $cvPath;
         }
-
+    
         // Save the updated user
         $user->save();
-
+    
         return response()->json(['message' => 'User details updated successfully', 'user' => $user], 200);
     }
+    
 
     /**
      * Display a listing of the resource.
@@ -70,16 +72,13 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-    // Fetch the user by ID
-        $user = User::find($id);
+
+    public function getUserDetailsById() {
+                // Get the authenticated user's ID using Auth::id()
+        $userId = Auth::id();
+
+        // Fetch the user by the authenticated user's ID
+        $user = User::find($userId);
 
         // Check if the user exists
         if (!$user) {

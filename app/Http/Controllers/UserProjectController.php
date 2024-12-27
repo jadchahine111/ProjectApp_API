@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Auth;
 
 class UserProjectController extends Controller
 {
@@ -17,8 +18,11 @@ class UserProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getAppliedProjects($userId)
+    public function getAppliedProjects()
     {
+
+        $userId = Auth::id();
+
         // Fetch all project IDs where the user applied
         $appliedProjectIds = UserProject::where('userId', $userId)
             ->where('status', 'applied')
@@ -42,8 +46,11 @@ class UserProjectController extends Controller
         ], 200);
     }
 
-    public function getFavoritedProjects($userId)
+    public function getFavoritedProjects()
     {
+
+        $userId = Auth::id();
+
         // Fetch all project IDs where the user applied
         $favoritedProjectIds = UserProject::where('userId', $userId)
             ->where('status', 'favorited')
@@ -68,8 +75,11 @@ class UserProjectController extends Controller
     }
 
 
-    public function getRejectedProjects($userId)
+    public function getRejectedProjects()
     {
+        
+        $userId = Auth::id();
+
         // Fetch all project IDs where the user applied
         $declinedProjectIds = UserProject::where('userId', $userId)
             ->where('status', 'rejected')
@@ -230,10 +240,12 @@ class UserProjectController extends Controller
         ], 201);
     }
     
-    public function getUserPostedProjects($id)
+    public function getUserPostedProjects()
     {
-   
-        $projects = Project::where('userId', $id)->get();
+        
+        $userId = Auth::id();
+
+        $projects = Project::where('userId', $userId)->get();
 
         // Check if the user has posted any projects
         if ($projects->isEmpty()) {

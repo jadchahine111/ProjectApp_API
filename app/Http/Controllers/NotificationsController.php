@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Notifications;
 use App\Http\Resources\NotificationResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationsController extends Controller
 {
@@ -15,9 +16,10 @@ class NotificationsController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getNotifications($userId)
+    public function getNotifications()
     {
-      
+        $userId = Auth::id();
+
         $notifications = Notifications::where('userId', $userId)->get();
 
         if ($notifications->isEmpty()) {

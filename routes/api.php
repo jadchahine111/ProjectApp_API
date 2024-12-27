@@ -42,8 +42,11 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
     Route::put('/projects/archive/{projectId}', [UserProjectController::class, 'archiveProject']);
     Route::delete('/projects/delete/{projectId}', [UserProjectController::class, 'deleteProject']);
-
-    // Project APIs
+    Route::get('/get-user-projects/{id}', [UserProjectController::class, 'getUserPostedProjects']);
+    Route::post('/add-project', [UserProjectController::class, 'postAProject']);
+    Route::post('/add-fav/{id}', [UserProjectController::class, 'addProjectToFav']);
+    Route::delete('/remove-fav/{id}', [UserProjectController::class, 'remProjectFromFav']);
+     // Project APIs
     Route::get('/projects/recent-active', [ProjectController::class, 'getRecentActiveProjects']); // Get recent active projects
     Route::put('/projects/update/{id}', [ProjectController::class, 'updateProject']); // Update project details
 });

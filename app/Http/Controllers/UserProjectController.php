@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\projectPostRequest;
 use App\Http\Resources\userProjectResource;
 use App\Models\UserProject;
 use App\Models\User;
@@ -216,6 +217,81 @@ class UserProjectController extends Controller
             'message' => 'Project deleted successfully.',
         ], 200);
     }
+    public function postAProject(projectPostRequest $request)
+    {
+        // Add the authenticated user ID to the request data
+        $data = $request->validated();
+        // Create the project with the validated data
+       Project::create($data);
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Project added successfully.',
+        ], 201);
+    }
+    
+    public function getUserPostedProjects($id)
+    {
+   
+        $projects = Project::where('userId', $id)->get();
+
+        // Check if the user has posted any projects
+        if ($projects->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No projects found for this user.',
+            ], 404);
+        }
+
+        // Return the projects as a collection using ProjectResource
+        return response()->json([
+            'success' => true,
+            'data' => ProjectResource::collection($projects),
+        ], 200);
+    }
+    public function addProjectToFav($id)
+    {
+        // Find the UserProject by ID
+        $userProject = UserProject::find($id);
+
+        if (!$userProject) {
+            return response()->json([
+                'success' => false,
+                'message' => 'UserProject not found.',
+            ], 404);
+        }
+
+        // Update the status to "rejected"
+        $userProject->update([
+            'status' => 'favorited',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated to favorited.',
+        ], 200);
+    }
+    public function remProjectFromFav($id)
+    {
+        // Find the UserProject by ID
+        $userProject = UserProject::find($id);
+    
+        if (!$userProject) {
+            return response()->json([
+                'success' => false,
+                'message' => 'UserProject not found.',
+            ], 404);
+        }
+    
+        // Delete the UserProject record
+        $userProject->delete();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Project removed from favorites successfully.',
+        ], 200);
+    }
+    
     public function index()
     {
         //

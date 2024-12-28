@@ -271,24 +271,41 @@ class UserProjectController extends Controller
     public function addProjectToFav($id)
     {
         // Find the UserProject by ID
-        $userProject = UserProject::find($id);
+        $userId = Auth::id();
+        $userProject = UserProject::where('userId', $userId)
+        ->where('projectId', $id)
+        ->first();
 
-        if (!$userProject) {
+        if ($userProject->status == 'applied') {
             return response()->json([
-                'success' => false,
-                'message' => 'UserProject not found.',
-            ], 404);
+                'success' => true,
+                'message' => 'You have already applied for this project.',
+            ], 200);
+        }
+        if ($userProject->status == 'rejected') {
+            return response()->json([
+                'success' => true,
+                'message' => 'You have already been rejected for this project.',
+            ], 200);
+        }
+        if ($userProject->status == 'favorited') {
+            return response()->json([
+                'success' => true,
+                'message' => 'This project is already favorited.',
+            ], 200);
         }
 
-        // Update the status to "rejected"
-        $userProject->update([
+        if (!$userProject) {
+        UserProject::create([
+            'userId' => $userId,
+            'projectId' => $id,
             'status' => 'favorited',
         ]);
-
         return response()->json([
             'success' => true,
             'message' => 'Status updated to favorited.',
         ], 200);
+        }
     }
     public function remProjectFromFav($id)
     {

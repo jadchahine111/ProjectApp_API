@@ -26,7 +26,12 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/{id}', [UserController::class, 'getOtherUserDetailsById']);
     Route::put('/update', [UserController::class, 'updateUserDetails']);
     Route::get('/rejected-projects', [UserProjectController::class, 'getRejectedProjects']);
+<<<<<<< HEAD
     Route::get('/posted-projects', [UserProjectController::class, 'getUserPostedProjects']);
+=======
+    Route::get('/accepted-projects', [UserProjectController::class, 'getAcceptedProjects']);
+    Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
+>>>>>>> origin/main
     Route::put('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
     Route::put('/user-projects/reject/{userId}', [UserProjectController::class, 'reject']);
     Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
@@ -62,7 +67,8 @@ Route::prefix('categories')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('notifications')->middleware('auth:sanctum')->group(function () {
-    Route::get('/all', [NotificationsController::class, 'getNotifications']); // Categories route here
+    Route::get('/all', [NotificationsController::class, 'getNotifications']);
+    Route::delete('/delete/{notificationId}', [NotificationsController::class, 'deleteNotification']);
 });
 
 

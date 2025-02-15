@@ -17,7 +17,7 @@ class CreateUserProjectsTable extends Migration
             $table->id();
             $table->foreignId('userId')->constrained('users')->onDelete('cascade');
             $table->foreignId('projectId')->constrained('projects')->onDelete('cascade');
-            $table->enum('status', ['applied', 'favorited','rejected']);
+            $table->enum('status', ['applied','accepted','favorited','rejected']);
             $table->timestamps();
         });
     }

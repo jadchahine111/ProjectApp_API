@@ -102,6 +102,33 @@ class UserProjectController extends Controller
             'data' => ProjectResource::collection($projects),
         ], 200);
     }
+    public function getAcceptedProjects()
+    {
+        
+        $userId = Auth::id();
+
+        // Fetch all project IDs where the user applied
+        $acceptedProjectIds = UserProject::where('userId', $userId)
+            ->where('status', 'accepted')
+            ->pluck('projectId'); 
+
+        // Check if there are any applied projects
+        if ($acceptedProjectIds->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                "message" => "You didn't get rejected by any projects",
+            ], 200);
+        }
+
+        // Fetch project details based on project IDs
+        $projects = Project::whereIn('id', $acceptedProjectIds)->get();
+
+        // Return projects as a collection using ProjectResource
+        return response()->json([
+            'success' => true,
+            'data' => ProjectResource::collection($projects),
+        ], 200);
+    }
     
 
     public function apply($id)
@@ -251,27 +278,6 @@ class UserProjectController extends Controller
         ], 201);
     }
     
-    public function getUserPostedProjects()
-    {
-        
-        $userId = Auth::id();
-
-        $projects = Project::where('userId', $userId)->get();
-
-        // Check if the user has posted any projects
-        if ($projects->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No projects found for this user.',
-            ], 404);
-        }
-
-        // Return the projects as a collection using ProjectResource
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
-    }
     public function addProjectToFav($id)
     {
         // Find the UserProject by ID

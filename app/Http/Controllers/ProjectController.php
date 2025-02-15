@@ -13,25 +13,12 @@ class ProjectController extends Controller
 
     public function getRecentActiveProjects(Request $request)
     {
-        // Fetch active projects sorted by the most recently created
         $projects = Project::where('status', 'active')
-            ->orderBy('created_at', 'desc') // Sort by the most recent
-            ->take(10) // Limit results to 10
+            ->orderBy('created_at', 'desc')
+            ->take(10)
             ->get();
-
-        // Check if any projects exist
-        if ($projects->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No projects found.',
-            ], 200);
-        }
-
-        // Return the projects using the ProjectResource for structured output
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
+        
+        return response()->json($projects, 200);
     }
 
     public function updateProject(UpdateProjectRequest $request, $id)

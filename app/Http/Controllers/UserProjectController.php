@@ -236,10 +236,14 @@ class UserProjectController extends Controller
     }
     public function postAProject(projectPostRequest $request)
     {
-        // Add the authenticated user ID to the request data
+        // Get validated data
         $data = $request->validated();
+    
+        // Add the authenticated user ID
+        $data['userId'] = auth()->id();
+    
         // Create the project with the validated data
-       Project::create($data);
+        Project::create($data);
     
         return response()->json([
             'success' => true,
@@ -357,28 +361,30 @@ class UserProjectController extends Controller
     
     public function getUserActiveProjects()
     {
-        
-        $userId = Auth::id();
-
-        // Get projects that are associated with the user and have a status of 'archived'
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated',
+            ], 401);
+        }
+    
+        $userId = Auth::guard('sanctum')->id();
+    
+        // Get projects associated with the user
         $projects = Project::where('userId', $userId)
-                            ->where('status', 'active')  // Filter projects with 'archived' status
+                            ->where('status', 'active')
                             ->get();
-
-        // Check if the user has posted any projects
+    
         if ($projects->isEmpty()) {
             return response()->json([
                 'success' => false,
-                "message" => "You don't have any active project applications",
+                'message' => "You don't have any active project applications",
             ], 404);
         }
-
-        // Return the projects as a collection using ProjectResource
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
+    
+        return response()->json($projects, 200);
     }
+    
 
 
     public function index()

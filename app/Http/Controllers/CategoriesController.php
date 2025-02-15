@@ -14,11 +14,16 @@ class CategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getAllCategories(Request $request)
     {
+        if (!$request->user()) {
+            return response()->json(['error' => 'User not found ya khara'], 404);
+        }
+    
         $categories = Categories::all();
-        return response()->json(CategoryResource::collection($categories));
+        return response()->json($categories, 200);
     }
+    
     
 
     /**

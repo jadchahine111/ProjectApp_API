@@ -31,10 +31,7 @@ class NotificationsController extends Controller
         }
 
 
-        return response()->json([
-            'success' => true,
-            'data' => NotificationResource::collection($notifications),
-        ], 200);
+        return response()->json($notifications, 200);
     }
 
     /**

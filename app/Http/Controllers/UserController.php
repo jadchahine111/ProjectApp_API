@@ -88,19 +88,19 @@ class UserController extends Controller
 
 
     public function getUserDetailsById() {
-                // Get the authenticated user's ID using Auth::id()
+        // Get the authenticated user's ID
         $userId = Auth::id();
-
+    
         // Fetch the user by the authenticated user's ID
         $user = User::find($userId);
-
+    
         // Check if the user exists
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-
-        // Return the user details as a JSON response
-        return response()->json(['user' => $user], 200);
+    
+        // Return the user details directly as a JSON response
+        return response()->json($user, 200);
     }
 
     /**

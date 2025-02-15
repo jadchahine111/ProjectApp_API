@@ -10,8 +10,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 
-
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,13 +25,10 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/info', [UserController::class, 'getUserDetailsById']);
     Route::get('/{id}', [UserController::class, 'getOtherUserDetailsById']);
     Route::put('/update', [UserController::class, 'updateUserDetails']);
-    Route::get('/notifications', [NotificationsController::class, 'getNotifications']);
-    Route::get('/categories', [CategoriesController::class, 'index']);
     Route::get('/applied-projects', [UserProjectController::class, 'getAppliedProjects']);
     Route::get('/favorited-projects', [UserProjectController::class, 'getFavoritedProjects']);
     Route::get('/rejected-projects', [UserProjectController::class, 'getRejectedProjects']);
     Route::get('/posted-projects', [UserProjectController::class, 'getUserPostedProjects']);
-    Route::get('/active-projects', [UserProjectController::class, 'getUserActiveProjects']);
     Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
     Route::put('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
     Route::put('/user-projects/reject/{userId}', [UserProjectController::class, 'reject']);
@@ -47,11 +42,23 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::put('/projects/update/{projectId}', [ProjectController::class, 'updateProject']); // Update project details
 });
 
+Route::prefix('projects')->middleware('auth:sanctum')->group(function () {
+    Route::get('/active-projects', [UserProjectController::class, 'getUserActiveProjects']);
+});
+
+Route::prefix('categories')->middleware('auth:sanctum')->group(function () {
+    Route::get('/all', [CategoriesController::class, 'getAllCategories']); // Categories route here
+});
+
+Route::prefix('notifications')->middleware('auth:sanctum')->group(function () {
+    Route::get('/all', [NotificationsController::class, 'getNotifications']); // Categories route here
+});
+
+
 Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('/accept-registration/{userId}', [AdminController::class, 'acceptUserRegistration']);
     Route::post('/decline-registration/{userId}', [AdminController::class, 'declineUserRegistration']);
 });
-
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);

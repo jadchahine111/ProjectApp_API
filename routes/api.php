@@ -25,11 +25,8 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/info', [UserController::class, 'getUserDetailsById']);
     Route::get('/{id}', [UserController::class, 'getOtherUserDetailsById']);
     Route::put('/update', [UserController::class, 'updateUserDetails']);
-    Route::get('/applied-projects', [UserProjectController::class, 'getAppliedProjects']);
-    Route::get('/favorited-projects', [UserProjectController::class, 'getFavoritedProjects']);
     Route::get('/rejected-projects', [UserProjectController::class, 'getRejectedProjects']);
     Route::get('/posted-projects', [UserProjectController::class, 'getUserPostedProjects']);
-    Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
     Route::put('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
     Route::put('/user-projects/reject/{userId}', [UserProjectController::class, 'reject']);
     Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
@@ -38,13 +35,27 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::post('/add-project', [UserProjectController::class, 'postAProject']);
     Route::post('/add-fav/{projectId}', [UserProjectController::class, 'addProjectToFav']);
     Route::delete('/remove-fav/{projectId}', [UserProjectController::class, 'remProjectFromFav']);
-    Route::get('/projects/recent-active', [ProjectController::class, 'getRecentActiveProjects']); // Get recent active projects
-    Route::put('/projects/update/{projectId}', [ProjectController::class, 'updateProject']); // Update project details
+    Route::get('/projects/recent-active', [ProjectController::class, 'getRecentActiveProjects']); 
+    Route::put('/projects/update/{projectId}', [ProjectController::class, 'updateProject']); 
 });
 
 Route::prefix('projects')->middleware('auth:sanctum')->group(function () {
     Route::get('/active-projects', [UserProjectController::class, 'getUserActiveProjects']);
+    Route::get('/{id}', [ProjectController::class, 'getProjectById']);
+    Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
+
 });
+
+
+Route::prefix('status')->middleware('auth:sanctum')->group(function () {
+    Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
+    Route::get('/favorited-projects', [UserProjectController::class, 'getFavoritedProjects']);
+    Route::get('/applied-projects', [UserProjectController::class, 'getAppliedProjects']);
+
+});
+
+
+
 
 Route::prefix('categories')->middleware('auth:sanctum')->group(function () {
     Route::get('/all', [CategoriesController::class, 'getAllCategories']); // Categories route here

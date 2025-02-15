@@ -17,7 +17,7 @@ class CategoriesController extends Controller
     public function getAllCategories(Request $request)
     {
         if (!$request->user()) {
-            return response()->json(['error' => 'User not found ya khara'], 404);
+            return response()->json(['error' => 'User not found'], 404);
         }
     
         $categories = Categories::all();

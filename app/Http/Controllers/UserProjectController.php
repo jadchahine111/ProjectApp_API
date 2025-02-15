@@ -40,10 +40,7 @@ class UserProjectController extends Controller
         $projects = Project::whereIn('id', $appliedProjectIds)->get();
 
         // Return projects as a collection using ProjectResource
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
+        return response()->json( $projects , 200);
     }
 
     public function getFavoritedProjects()
@@ -68,10 +65,7 @@ class UserProjectController extends Controller
         $projects = Project::whereIn('id', $favoritedProjectIds)->get();
 
         // Return projects as a collection using ProjectResource
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
+        return response()->json($projects, 200);
     }
 
 
@@ -352,10 +346,7 @@ class UserProjectController extends Controller
         }
 
         // Return the projects as a collection using ProjectResource
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
+        return response()->json($projects);
     }
 
     

@@ -21,17 +21,13 @@ use App\Http\Controllers\ProjectController;
 |
 */
 
+Route::post('/signup', [AuthController::class, 'signUp']);
+
+
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/info', [UserController::class, 'getUserDetailsById']);
     Route::get('/{id}', [UserController::class, 'getOtherUserDetailsById']);
     Route::put('/update', [UserController::class, 'updateUserDetails']);
-    Route::get('/rejected-projects', [UserProjectController::class, 'getRejectedProjects']);
-<<<<<<< HEAD
-    Route::get('/posted-projects', [UserProjectController::class, 'getUserPostedProjects']);
-=======
-    Route::get('/accepted-projects', [UserProjectController::class, 'getAcceptedProjects']);
-    Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
->>>>>>> origin/main
     Route::put('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
     Route::put('/user-projects/reject/{userId}', [UserProjectController::class, 'reject']);
     Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
@@ -47,16 +43,19 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 Route::prefix('projects')->middleware('auth:sanctum')->group(function () {
     Route::get('/active-projects', [UserProjectController::class, 'getUserActiveProjects']);
     Route::get('/{id}', [ProjectController::class, 'getProjectById']);
-    Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
-
+    Route::get('/{projectId}/applied-users', [UserProjectController::class, 'getAppliedUsersForProject']);
+    Route::put('/{projectId}/accept-applicant/{userId}', [UserProjectController::class, 'acceptProjectApplicant']);
+    Route::put('/{projectId}/decline-applicant/{userId}', [UserProjectController::class, 'declineProjectApplicant']);
 });
 
 
 Route::prefix('status')->middleware('auth:sanctum')->group(function () {
+    Route::get('/accepted-projects', [UserProjectController::class, 'getAcceptedProjects']);
     Route::get('/archived-projects', [UserProjectController::class, 'getUserArchivedProjects']);
     Route::get('/favorited-projects', [UserProjectController::class, 'getFavoritedProjects']);
     Route::get('/applied-projects', [UserProjectController::class, 'getAppliedProjects']);
-
+    Route::get('/rejected-projects', [UserProjectController::class, 'getRejectedProjects']);
+    Route::get('/favorited-projects', [UserProjectController::class, 'getFavoritedProjects']);  
 });
 
 
@@ -80,6 +79,7 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/admin/login', [AuthController::class, 'loginAdmin']);
-    Route::post('/signup', [AuthController::class, 'signup']);  // Sign-up route
-    Route::get('/verify-email', [AuthController::class, 'verifyEmail'])->name('verify.email');  // Email verification route
+    Route::post('/verify-email', [AuthController::class, 'verifyEmail'])->name('verify.email');  // Email verification route
+    Route::get('/check-verification-status', [AuthController::class, 'checkVerificationStatus']);
+
 });

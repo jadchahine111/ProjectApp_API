@@ -13,6 +13,76 @@ use Illuminate\Support\Facades\Auth;
 
 class UserProjectController extends Controller
 {
+
+    public function getAppliedUsersForProject(Request $request, $projectId)
+    {
+        // Fetch all user IDs where the status is 'applied' for the given project
+        $appliedUserIds = UserProject::where('projectId', $projectId)
+            ->where('status', 'applied')
+            ->pluck('userId');
+        
+        // If there are no applied users, return an empty array
+        if ($appliedUserIds->isEmpty()) {
+            return response()->json((object)[], 200);
+        }
+
+        // Retrieve the User models for the given IDs
+        $users = User::whereIn('id', $appliedUserIds)->get();
+
+        // Return the users as JSON (an array of user objects)
+        return response()->json($users, 200);
+    }
+
+    /**
+     * Accept an applicant for a project.
+     * Updates the status to 'accepted' and returns a JSON response.
+     */
+    public function acceptProjectApplicant(Request $request, $projectId, $userId)
+    {
+        // Find the UserProject record matching the project and user
+        $userProject = UserProject::where('projectId', $projectId)
+            ->where('userId', $userId)
+            ->first();
+
+        if (!$userProject) {
+            return response()->json(['error' => 'Application not found'], 404);
+        }
+
+        // Update the status to 'accepted'
+        $userProject->status = 'accepted';
+        $userProject->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Applicant accepted successfully'
+        ], 200);
+    }
+
+    /**
+     * Decline an applicant for a project.
+     * Updates the status to 'declined' and returns a JSON response.
+     */
+    public function declineProjectApplicant(Request $request, $projectId, $userId)
+    {
+        // Find the UserProject record matching the project and user
+        $userProject = UserProject::where('projectId', $projectId)
+            ->where('userId', $userId)
+            ->first();
+
+        if (!$userProject) {
+            return response()->json(['error' => 'Application not found'], 404);
+        }
+
+        // Update the status to 'declined'
+        $userProject->status = 'declined';
+        $userProject->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Applicant declined successfully'
+        ], 200);
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -91,11 +161,8 @@ class UserProjectController extends Controller
         $projects = Project::whereIn('id', $declinedProjectIds)->get();
 
         // Return projects as a collection using ProjectResource
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
-    }
+        return response()->json($projects);
+        }
     public function getAcceptedProjects()
     {
         
@@ -118,10 +185,7 @@ class UserProjectController extends Controller
         $projects = Project::whereIn('id', $acceptedProjectIds)->get();
 
         // Return projects as a collection using ProjectResource
-        return response()->json([
-            'success' => true,
-            'data' => ProjectResource::collection($projects),
-        ], 200);
+        return response()->json($projects);
     }
     
 
@@ -274,43 +338,57 @@ class UserProjectController extends Controller
     
     public function addProjectToFav($id)
     {
-        // Find the UserProject by ID
         $userId = Auth::id();
+    
+        // ✅ Ensure user ID is not null
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User ID is missing. Please check authentication.',
+            ], 400);
+        }
+    
+        // Find the UserProject by userId and projectId
         $userProject = UserProject::where('userId', $userId)
-        ->where('projectId', $id)
-        ->first();
-
-        if ($userProject->status == 'applied') {
-            return response()->json([
-                'success' => true,
-                'message' => 'You have already applied for this project.',
-            ], 200);
+            ->where('projectId', $id)
+            ->first();
+    
+        if ($userProject) {
+            if ($userProject->status == 'applied') {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'You have already applied for this project.',
+                ], 200);
+            }
+            if ($userProject->status == 'rejected') {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'You have already been rejected for this project.',
+                ], 200);
+            }
+            if ($userProject->status == 'favorited') {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'This project is already favorited.',
+                ], 200);
+            }
         }
-        if ($userProject->status == 'rejected') {
-            return response()->json([
-                'success' => true,
-                'message' => 'You have already been rejected for this project.',
-            ], 200);
-        }
-        if ($userProject->status == 'favorited') {
-            return response()->json([
-                'success' => true,
-                'message' => 'This project is already favorited.',
-            ], 200);
-        }
-
-        if (!$userProject) {
+    
+        // ✅ Insert userId properly
         UserProject::create([
-            'userId' => $userId,
+            'userId' => $userId,  
             'projectId' => $id,
             'status' => 'favorited',
         ]);
+    
         return response()->json([
             'success' => true,
             'message' => 'Status updated to favorited.',
         ], 200);
-        }
     }
+    
+    
+    
     public function remProjectFromFav($id)
     {
         // Find the UserProject by ID

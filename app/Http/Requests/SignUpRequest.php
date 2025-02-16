@@ -26,12 +26,9 @@ class SignUpRequest extends FormRequest
         return [
             'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed', // Make sure to add `password_confirmation` field in the request
+            'password' => 'required|string|min:8|confirmed', 
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
-            'frontIdPic' => 'required|string|max:255',
-            'backIdPic' => 'required|string|max:255',
-            'CV' => 'required|string|max:255',
             'skills' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:500',
             'linkedinURL' => 'nullable|url|max:255',

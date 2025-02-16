@@ -14,19 +14,8 @@ class User extends Authenticatable
     use HasFactory, HasApiTokens, Notifiable;
 
     protected $fillable = [
-        'username', 
-        'email', 
-        'password', 
-        'firstName', 
-        'lastName', 
-        'frontIdPic', 
-        'backIdPic', 
-        'userStatus', 
-        'registrationStatus', 
-        'CV', 
-        'bio', 
-        'linkedinURL', 
-        'skills'
+        'username', 'email', 'password', 'firstName', 'lastName', 
+        'userStatus', 'registrationStatus', 'bio', 'linkedinURL', 'skills'
     ];
     
     public function notifications() {

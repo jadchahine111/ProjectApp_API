@@ -10,6 +10,7 @@ use App\Http\Requests\VerifyEmailRequest; // Import the custom request
 use App\Http\Requests\AdminLoginRequest; // Import the custom request
 use App\Http\Requests\SignUpRequest;
 use App\Models\Admin;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -83,32 +84,40 @@ class AuthController extends Controller
     // Sign Up API
     public function signUp(SignUpRequest $request)
     {
-        // Create a new user
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash the password
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'frontIdPic' => $request->frontIdPic,
-            'backIdPic' => $request->backIdPic,
-            'CV' => $request->CV,
-            'skills' => $request->skills,
-            'bio' => $request->bio,
-            'linkedinURL' => $request->linkedinURL,
-            'userStatus' => 'notVerified',  // Initially set as notVerified
-            'registrationStatus' => 'pending', // Initially set as pending
-        ]);
-
-        // Send verification email to the user
-        $this->sendVerificationEmail($user);
-
-        // Return the user resource response
-        return response()->json([
-            'message' => 'User registered successfully! A verification email has been sent.',
-            'user' => new UserResource($user),
-        ], 201);
+        try {
+            // Create a new user
+            $user = User::create([
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password), // Hash the password
+                'firstName' => $request->firstName,
+                'lastName' => $request->lastName,
+                'skills' => $request->skills,
+                'bio' => $request->bio,
+                'linkedinURL' => $request->linkedinURL,
+                'userStatus' => 'notVerified',  // Initially set as notVerified
+                'registrationStatus' => 'pending', // Initially set as pending
+            ]);
+    
+            // Send verification email to the user
+            $this->sendVerificationEmail($user);
+    
+            // Return the user resource response
+            return response()->json([
+                'message' => 'User registered successfully! A verification email has been sent.',
+                'user' => new UserResource($user),
+            ], 201);
+            
+        } catch (\Exception $e) {
+            // Catch any exceptions and return a generic error message
+            return response()->json([
+                'message' => 'Registration failed! Please try again later.',
+                'error' => $e->getMessage(), // Optional: Provide error message for debugging purposes
+            ], 500);
+        }
     }
+    
+    
     
         // Login API
         public function loginAdmin(AdminLoginRequest $request)
@@ -132,4 +141,31 @@ class AuthController extends Controller
                 'token' => $token,
             ]);
         }
+
+
+        public function checkVerificationStatus(Request $request)
+{
+    // Validate the request to ensure 'email' is provided
+    $request->validate([
+        'email' => 'required|email',
+    ]);
+
+    // Retrieve the email from the query string
+    $email = $request->query('email');
+
+    // Find the user by email
+    $user = User::where('email', $email)->first();
+
+    // Check if the user exists
+    if ($user) {
+        // Return 'verified' or 'notVerified' based on the userStatus
+        return response()->json([
+            'status' => $user->userStatus === 'verified' ? 'verified' : 'notVerified'
+        ]);
+    }
+
+    // If user not found, return an error response
+    return response()->json(['error' => 'User not found'], 404);
+}
+
 }

@@ -23,7 +23,7 @@ class UserProjectController extends Controller
         
         // If there are no applied users, return an empty array
         if ($appliedUserIds->isEmpty()) {
-            return response()->json((object)[], 200);
+            return response()->json([], 200);
         }
 
         // Retrieve the User models for the given IDs
@@ -74,7 +74,7 @@ class UserProjectController extends Controller
         }
 
         // Update the status to 'declined'
-        $userProject->status = 'declined';
+        $userProject->status = 'rejected    ';
         $userProject->save();
 
         return response()->json([
@@ -100,10 +100,8 @@ class UserProjectController extends Controller
 
         // Check if there are any applied projects
         if ($appliedProjectIds->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No applied projects found for this user.',
-            ], 200);
+            return response()->json([], 200);
+
         }
 
         // Fetch project details based on project IDs
@@ -112,31 +110,27 @@ class UserProjectController extends Controller
         // Return projects as a collection using ProjectResource
         return response()->json( $projects , 200);
     }
-
     public function getFavoritedProjects()
     {
-
         $userId = Auth::id();
-
-        // Fetch all project IDs where the user applied
+    
+        // Fetch all project IDs where the user favorited
         $favoritedProjectIds = UserProject::where('userId', $userId)
             ->where('status', 'favorited')
-            ->pluck('projectId'); 
-
-        // Check if there are any applied projects
+            ->pluck('projectId');
+    
+        // Return an empty JSON object if there are no favorited projects
         if ($favoritedProjectIds->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                "message" => "You don't have any projects in your favorites",
-            ], 200);
+            return response()->json([], 200);
         }
-
+    
         // Fetch project details based on project IDs
         $projects = Project::whereIn('id', $favoritedProjectIds)->get();
-
-        // Return projects as a collection using ProjectResource
+    
+        // Return projects as a JSON response
         return response()->json($projects, 200);
     }
+    
 
 
     public function getRejectedProjects()
@@ -151,10 +145,7 @@ class UserProjectController extends Controller
 
         // Check if there are any applied projects
         if ($declinedProjectIds->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                "message" => "You didn't get rejected by any projects",
-            ], 200);
+            return response()->json([], 200);
         }
 
         // Fetch project details based on project IDs
@@ -175,10 +166,8 @@ class UserProjectController extends Controller
 
         // Check if there are any applied projects
         if ($acceptedProjectIds->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                "message" => "You didn't get rejected by any projects",
-            ], 200);
+            return response()->json([], 200);
+
         }
 
         // Fetch project details based on project IDs
@@ -389,15 +378,21 @@ class UserProjectController extends Controller
     
     
     
-    public function remProjectFromFav($id)
+    public function remProjectFromFav($projectId)
     {
-        // Find the UserProject by ID
-        $userProject = UserProject::find($id);
+        // Log the ID and user for debugging purposes
+        \Log::info('Project ID: ' . $projectId);
+        \Log::info('Authenticated User ID: ' . auth()->user()->id);
+    
+        // Find the UserProject by projectId and authenticated userId
+        $userProject = UserProject::where('projectId', $projectId)
+                                  ->where('userId', auth()->user()->id)  // Ensure it's the authenticated user
+                                  ->first();
     
         if (!$userProject) {
             return response()->json([
                 'success' => false,
-                'message' => 'UserProject not found.',
+                'message' => 'UserProject not found for this user and project.',
             ], 404);
         }
     
@@ -405,10 +400,10 @@ class UserProjectController extends Controller
         $userProject->delete();
     
         return response()->json([
-            'success' => true,
-            'message' => 'Project removed from favorites successfully.',
+            'success' => 'Project removed from favorites successfully.',
         ], 200);
     }
+    
     
 
     public function getUserArchivedProjects()
@@ -423,10 +418,8 @@ class UserProjectController extends Controller
 
         // Check if the user has posted any projects
         if ($projects->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                "message" => "You don't have any archived project applications",
-            ], 404);
+            return response()->json([], 200);
+
         }
 
         // Return the projects as a collection using ProjectResource
@@ -451,10 +444,8 @@ class UserProjectController extends Controller
                             ->get();
     
         if ($projects->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => "You don't have any active project applications",
-            ], 404);
+            return response()->json([], 200);
+
         }
     
         return response()->json($projects, 200);

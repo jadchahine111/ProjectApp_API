@@ -23,11 +23,7 @@ class NotificationsController extends Controller
         $notifications = Notifications::where('userId', $userId)->get();
 
         if ($notifications->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'data' => [],
-                'message' => 'No notifications found for this user.',
-            ], 200);
+            return response()->json([], 200);
         }
 
 

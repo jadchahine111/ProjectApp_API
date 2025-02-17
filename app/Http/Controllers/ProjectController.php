@@ -7,6 +7,8 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProjectResource;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\UserProject;
+use Illuminate\Support\Facades\Auth;
 
 
 class ProjectController extends Controller
@@ -49,11 +51,22 @@ class ProjectController extends Controller
     public function getProjectById($id)
     {
         $project = Project::find($id);
-
+    
         if (!$project) {
             return response()->json(['message' => 'Project not found'], Response::HTTP_NOT_FOUND);
         }
-
+    
+        $userId = Auth::id(); // Get authenticated user ID
+    
+        // Check if the project is saved (favorited) by the user
+        $isSaved = UserProject::where('userId', $userId)
+                              ->where('projectId', $id)
+                              ->where('status', 'favorited')
+                              ->exists();
+    
+        // Append isSaved attribute to the project
+        $project->isSaved = $isSaved;
+    
         return response()->json($project, Response::HTTP_OK);
     }
 }

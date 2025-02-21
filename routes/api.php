@@ -28,7 +28,7 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/info', [UserController::class, 'getUserDetailsById']);
     Route::get('/{id}', [UserController::class, 'getOtherUserDetailsById']);
     Route::put('/update', [UserController::class, 'updateUserDetails']);
-    Route::put('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
+    Route::post('/user-projects/apply/{projectId}', [UserProjectController::class, 'apply']);
     Route::put('/user-projects/reject/{userId}', [UserProjectController::class, 'reject']);
     Route::put('/projects/unarchive/{projectId}', [UserProjectController::class, 'unarchiveProject']);
     Route::put('/projects/archive/{projectId}', [UserProjectController::class, 'archiveProject']);
@@ -46,6 +46,8 @@ Route::prefix('projects')->middleware('auth:sanctum')->group(function () {
     Route::get('/{projectId}/applied-users', [UserProjectController::class, 'getAppliedUsersForProject']);
     Route::put('/{projectId}/accept-applicant/{userId}', [UserProjectController::class, 'acceptProjectApplicant']);
     Route::put('/{projectId}/decline-applicant/{userId}', [UserProjectController::class, 'declineProjectApplicant']);
+    Route::get('/filtered-projects', [ProjectController::class, 'getFilteredProjects']);
+    Route::get('/{categoryId}/projects-by-category', [ProjectController::class, 'getProjectsByCategory']);
 });
 
 

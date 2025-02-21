@@ -52,6 +52,15 @@ class UserProjectController extends Controller
         $userProject->status = 'accepted';
         $userProject->save();
 
+            // Create the notification message
+    // $message = 'Congratulations! You have been accepted to the project: ' . $project->title;
+
+    // Create and save the notification for the user
+    // Notifications::create([
+       //  'user_id' => $userId,  // Assuming the 'user_id' column exists in the Notifications table
+        // 'message' => $message
+    // ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Applicant accepted successfully'
@@ -343,12 +352,6 @@ class UserProjectController extends Controller
             ->first();
     
         if ($userProject) {
-            if ($userProject->status == 'applied') {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'You have already applied for this project.',
-                ], 200);
-            }
             if ($userProject->status == 'rejected') {
                 return response()->json([
                     'success' => true,
@@ -372,7 +375,7 @@ class UserProjectController extends Controller
     
         return response()->json([
             'success' => true,
-            'message' => 'Status updated to favorited.',
+            'message' => 'Added to favorites.',
         ], 200);
     }
     
